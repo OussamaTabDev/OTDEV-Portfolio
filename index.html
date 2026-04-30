@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Backend engineer specializing in Django, Rust, and offline-first desktop apps. Built systems used in production at real libraries.">
+  <title>Oussama Tabzioui — systems that ship</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink: #141413;
+      --paper: #faf9f5;
+      --mid-light: #8a8780;
+      --mid: #6b6862;
+      --mid-dark: #4a4843;
+      --light: #e8e6dc;
+      --accent: #d97757;
+      --accent-dark: #b85c3a;
+      --blue: #6a9bcc;
+      --green: #788c5d;
+      --serif: 'DM Serif Display', Georgia, serif;
+      --mono: 'DM Mono', monospace;
+      --syne: 'Syne', sans-serif;
+    }
+
+    body {
+      font-family: var(--syne);
+      background: var(--paper);
+      color: var(--ink);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    @media (max-width: 768px) {
+      body { cursor: auto; }
+    }
+
+    .cur {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+    }
+    .cur-r {
+      position: fixed;
+      width: 32px;
+      height: 32px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      opacity: 0.35;
+      transition: width 0.2s, height 0.2s;
+    }
+    @media (max-width: 768px) {
+      .cur, .cur-r { display: none; }
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.6rem 3rem;
+      border-bottom: 1px solid var(--light);
+    }
+    .n-logo {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .n-logo span { color: var(--accent); }
+    .n-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .n-links a {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .n-links a:hover { color: var(--ink); }
+    .avail-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.25rem 0.65rem;
+    }
+    .avail-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      min-height: 85vh;
+      padding: 0 3rem;
+    }
+    .h-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 4rem 4rem 0;
+      border-right: 1px solid var(--light);
+    }
+    .h-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .h-eyebrow::before {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(3.2rem, 7vw, 5.8rem);
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .h-role {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid-dark);
+      margin-bottom: 1rem;
+    }
+    .h-bio {
+      font-size: 0.95rem;
+      color: var(--mid-dark);
+      line-height: 1.8;
+      max-width: 42ch;
+      margin-bottom: 1.5rem;
+    }
+    .h-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+    }
+    .btn-p {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--paper);
+      background: var(--ink);
+      border: none;
+      padding: 0.8rem 1.8rem;
+      cursor: none;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-p:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+    .btn-g {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      background: none;
+      border: none;
+      cursor: none;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+    }
+    .btn-g:hover { color: var(--ink); }
+    .btn-g::after { content: '↗'; font-size: 13px; }
+
+    .h-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 0 4rem 4rem;
+      gap: 2rem;
+    }
+    .h-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--light);
+      border: 1px solid var(--light); /* Prevents jagged edges */
+    }
+
+    /* Add a hover effect to the stat cards */
+    .h-stat {
+      background: var(--paper);
+      padding: 1.5rem;
+      transition: background 0.3s ease;
+    }
+
+    .h-stat:hover {
+      background: #fdfdfb;
+    }
+    .stat-n {
+      font-family: var(--serif);
+      font-size: 2.4rem;
+      line-height: 1;
+      color: var(--ink);
+    }
+    .stat-l {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-top: 0.3rem;
+    }
+    .stat-note {
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--accent);
+      margin-top: 0.25rem;
+    }
+
+    .current-build {
+      padding: 2.5rem 3rem;
+      border-top: 1px solid var(--light);
+      border-bottom: 1px solid var(--light);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+    .build-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 0.4rem;
+    }
+    .build-val {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .featured {
+      padding: 4rem 3rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      background: var(--ink);
+    }
+    .feat-tag {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .feat-tag::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .feat-title {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--paper);
+      margin-bottom: 1rem;
+    }
+    .feat-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .feat-metric {
+      font-family: var(--mono);
+      font-size: 2.2rem;
+      color: var(--accent);
+      margin: 0.75rem 0 0.25rem;
+      line-height: 1;
+    }
+    .feat-metric-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: rgba(250,249,245,0.5);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+    .feat-desc {
+      font-size: 0.95rem;
+      color: rgba(250, 249, 245, 0.7);
+      line-height: 1.75;
+      margin-bottom: 1.8rem;
+      max-width: 44ch;
+    }
+
+    .sec { padding: 0 3rem; }
+    .sec-header {
+      padding: 3rem 0 2rem;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-top: 1px solid var(--light);
+    }
+    .sec-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mid);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .sec-eyebrow::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .sec-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .sec-title em { font-style: italic; color: var(--accent); }
+    img {
+      filter: sepia(15%) contrast(95%); /* Makes the white slightly warmer to match your site's paper tone */
+    }
+    .projects { padding: 0 3rem 2rem; }
+    .proj-item {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 0 1.5rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--light);
+      cursor: pointer;
+      transition: background 0.2s, padding-left 0.2s;
+    }
+    .proj-item:hover {
+      background: var(--light);
+      padding-left: 0.5rem;
+    }
+    .proj-num {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--mid);
+      padding-top: 0.2rem;
+    }
+    .proj-head {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .proj-title {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+    .proj-period {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--mid);
+      letter-spacing: 0.08em;
+    }
+    .proj-impact {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .proj-desc {
+      font-size: 0.9rem;
+      color: var(--mid-dark);
+      line-height: 1.7;
+      margin-bottom: 0.9rem;
+      max-width: 62ch;
+    }
+    .proj-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .tag {
+      font-family: var(--mono);
+      font-size: 10px; /* Increased from 8px for readability */
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem; /* More breathing room */
+      border: 1px solid var(--light);
+      color: var(--mid);
+      white-space: nowrap;
+    }
+    .tag.hi {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+    .proj-arrow {
+      font-size: 1rem;
+      color: var(--light);
+      transition: color 0.2s, transform 0.2s;
+      padding-top: 0.25rem;
+    }
+    .proj-item:hover .proj-arrow {
+      color: var(--accent);
+      transform: translate(3px, -3px);
+    }
+
+    .exp-wrap { padding: 0 3rem 4rem; border-top: 1px solid var(--light); }
+    .exp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--light);
+      margin-top: 2.5rem;
+    }
+    .exp-card {
+      background: var(--paper);
+      padding: 2rem;
+    }
+    .exp-role {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      line-height: 1.15;
+      margin-bottom: 0.25rem;
+      color: var(--ink);
+    }
+    .exp-company {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    .exp-period {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--mid);
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+    }
+    .exp-desc {
+      font-size: 0.9rem;
+      color: var(--mid-dark);
+      line-height: 1.7;
+    }
+
+    .contact {
+      padding: 4rem 3rem;
+      border-top: 1px solid var(--light);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .contact-title {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 5.5vw, 4.5rem);
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+    .contact-title em { font-style: italic; color: var(--accent); }
+    .contact-sub {
+      font-size: 0.9rem;
+      color: var(--mid-dark);
+      line-height: 1.75;
+      margin-top: 1.5rem;
+      max-width: 38ch;
+    }
+    .c-links {
+      display: flex;
+      flex-direction: column;
+      margin-top: 0.5rem;
+    }
+    .c-link {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      text-decoration: none;
+      color: var(--ink);
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--light);
+      cursor: none;
+      transition: padding-left 0.2s;
+    }
+    .c-link:hover { padding-left: 0.5rem; }
+    .c-platform {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      min-width: 60px;
+    }
+    .c-val {
+      font-family: var(--syne);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    footer {
+      padding: 1.75rem 3rem;
+      border-top: 1px solid var(--light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .f-copy {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--mid);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .modal.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .modal-content {
+      background: var(--paper);
+      max-width: 700px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 2rem;
+      position: relative;
+    }
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      font-family: var(--mono);
+    }
+    .modal h3 {
+      font-family: var(--serif);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero, .featured, .contact, .exp-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .h-left, .h-right {
+        padding: 2rem;
+        border: none;
+      }
+      .current-build {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+      }
+      .proj-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+      nav {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .sec, .projects, .contact, .exp-wrap {
+        padding: 0 1rem;
+      }
+      .featured, .current-build {
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+
+  <nav>
+    <a href="#" class="n-logo">OT<span>.</span>dev</a>
+    <ul class="n-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#exp">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="avail-pill"><span class="avail-dot"></span>Open to work</div>
+  </nav>
+
+  <section class="hero">
+    <div class="h-left">
+      <div class="h-eyebrow">Backend · Systems · Offline-first — Khénifra, Morocco</div>
+      <h1>I build systems<br>that <em>ship</em> and<br>stay shipped.</h1>
+      <div class="h-role">Backend Engineer · Django · Rust</div>
+      <p class="h-bio">Backend-focused developer with a bias for production reality. I design clean architectures, optimize for performance, and deliver software that actually gets used — not just demoed.</p>
+      <div class="h-actions">
+        <a href="#work" class="btn-p">See my work</a>
+        <a href="https://github.com/OussamaTabDev" class="btn-g">GitHub</a>
+        <a href="#contact" class="btn-g">Contact</a>
+      </div>
+    </div>
+    <div class="h-right">
+      <div class="h-stat-row">
+        <div class="h-stat"><div class="stat-n">5+</div><div class="stat-l">Projects shipped</div><div class="stat-note">3 in production</div></div>
+        <div class="h-stat"><div class="stat-n">2+</div><div class="stat-l">Years building</div><div class="stat-note">full-time focus</div></div>
+        <div class="h-stat"><div class="stat-n">−87%</div><div class="stat-l">Time saved</div><div class="stat-note">TemplateFlow metric</div></div>
+        <div class="h-stat"><div class="stat-n"></div><div class="stat-l"></div><div class="stat-note"></div></div>
+      </div>
+      <div class="h-location"><span class="avail-dot"></span>Available for remote · +212 774 368 063</div>
+    </div>
+  </section>
+
+  <div class="current-build reveal">
+    <div class="build-item"><div class="build-label">Currently building</div><div class="build-val">WayToys — Rust/Tauri desktop app</div></div>
+    <div class="build-item"><div class="build-label">Deployed in production</div><div class="build-val">TemplateFlow — live in a real library</div></div>
+    <div class="build-item"><div class="build-label">Core stack</div><div class="build-val">Python · Django · React · Rust</div></div>
+    <div class="build-item"><div class="build-label">Focus</div><div class="build-val">Backend · Offline-first · Performance</div></div>
+  </div>
+
+  <div class="featured reveal">
+    <div>
+      <div class="feat-tag">⚡ Production · Used daily at a real library</div>
+      <h2 class="feat-title">Template<br><em>Flow</em></h2>
+      <div class="feat-metric">−87%</div>
+      <div class="feat-metric-label">DOCUMENT CREATION TIME ELIMINATED</div>
+      <p class="feat-desc">Offline-first desktop automation. Custom template engine with loops, conditionals, and full RTL support. Built for non-technical library staff. Works completely offline — no cloud dependency.</p>
+      <div class="h-actions">
+        <a href="#" class="btn-p case-trigger" data-case="templateflow" style="background:var(--accent)">Read case study →</a>
+      </div>
+    </div>
+    <!-- <div style="background:rgba(250,249,245,0.04); border:1px solid rgba(250,249,245,0.08); aspect-ratio:4/3; padding:1.5rem;">
+      <div style="display:flex; gap:5px; margin-bottom:1rem;"><div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.1);"></div><div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.1);"></div><div style="width:7px;height:7px;border-radius:50%;background:rgba(217,119,87,0.4);"></div></div>
+      <div style="display:grid; grid-template-columns:1fr 2fr; gap:0.75rem; height:calc(100% - 2rem);">
+        <div style="display:flex; flex-direction:column; gap:0.5rem;"><div style="background:rgba(255,255,255,0.04); flex:1;"></div><div style="background:rgba(217,119,87,0.12); flex:1;"></div><div style="background:rgba(255,255,255,0.04); flex:1;"></div></div>
+        <div style="display:flex; flex-direction:column; gap:0.5rem;"><div style="background:rgba(255,255,255,0.04); height:18px;"></div><div style="background:rgba(217,119,87,0.15); height:20px;"></div><div style="background:rgba(255,255,255,0.04); height:28px;"></div><div style="background:rgba(255,255,255,0.04); height:18px;"></div><div style="background:rgba(255,255,255,0.04); height:28px;"></div><div style="background:rgba(255,255,255,0.04); height:18px;"></div><div style="background:rgba(217,119,87,0.15); height:36px; margin-top:auto;"></div></div>
+      </div>
+    </div> -->
+
+    <div style="border: 1px solid rgba(250,249,245,0.1); border-radius: 8px; overflow: hidden; background: var(--ink); box-shadow: 0 16px 40px rgba(0,0,0,0.4);">
+      <img src="templateflow2.png" alt="TemplateFlow Dashboard" style="width: 100%; height: auto; display: block; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+  </div>
+
+  <section id="work" class="sec reveal">
+    <div class="sec-header"><div><div class="sec-eyebrow">Selected work</div><h2 class="sec-title">All <em>projects</em></h2></div></div>
+  </section>
+  <div class="projects" id="projectsContainer"></div>
+
+  <section id="exp" class="sec reveal">
+    <div class="sec-header"><div><div class="sec-eyebrow">Background</div><h2 class="sec-title">Experience &amp; <em>education</em></h2></div></div>
+  </section>
+  <div class="exp-wrap">
+    <div class="exp-grid">
+      <div class="exp-card"><div class="exp-role">Independent Software Developer</div><div class="exp-company">Self-Employed</div><div class="exp-period">Jul 2023 – Present</div><p class="exp-desc">Designing and shipping scalable backend systems and AI-integrated applications. Full lifecycle ownership: architecture, implementation, testing, deployment.</p></div>
+      <div class="exp-card"><div class="exp-role">Software Developer Intern</div><div class="exp-company">GenerationNT · Meknès</div><div class="exp-period">Sep 2024 – Dec 2024</div><p class="exp-desc">Built a full e-commerce platform in PHP + MySQL. Shopping cart, product management, admin dashboard. Optimized SQL queries, security best practices.</p></div>
+      <div class="exp-card"><div class="exp-role">Bachelor in Mathematics &amp; CS</div><div class="exp-company">Moulay Ismail University · Meknès</div><div class="exp-period">Oct 2021 – Jul 2025</div><p class="exp-desc">SMI track — Maths and Computer Science double discipline. Strong foundation in algorithms, system design, and applied mathematics.</p></div>
+      <div class="exp-card" style="background:var(--ink)"><div class="exp-role" style="color:var(--paper)">OussamaTabzioui09@gmail.com</div><div class="exp-company" style="color:var(--accent)">Let's work together</div><div class="exp-period" style="color:rgba(250,249,245,.4)">Open to full-time · freelance · collab</div><p class="exp-desc" style="color:rgba(250,249,245,.6)">If you need someone who owns problems end-to-end and ships — reach out.</p></div>
+    </div>
+  </div>
+
+  <section id="contact" class="contact reveal">
+    <div><h2 class="contact-title">Ready to<br>work<br><em>together?</em></h2><p class="contact-sub">Open to full-time roles, freelance contracts, and remote work. I respond within 24 hours.</p></div>
+    <div class="c-links">
+      <a href="mailto:OussamaTabzioui09@gmail.com" class="c-link"><span class="c-platform">Email</span><span class="c-val">OussamaTabzioui09@gmail.com</span><span class="c-arr">↗</span></a>
+      <a href="https://github.com/OussamaTabDev" target="_blank" class="c-link"><span class="c-platform">GitHub</span><span class="c-val">github.com/OussamaTabDev</span><span class="c-arr">↗</span></a>
+      <a href="tel:+212774368063" class="c-link"><span class="c-platform">Phone</span><span class="c-val">+212 774 368 063</span><span class="c-arr">↗</span></a>
+    </div>
+  </section>
+
+  <footer><span class="f-copy">© 2025 Oussama Tabzioui · Backend Engineer · Khénifra, Morocco</span><span class="f-avail" style="display:flex; align-items:center; gap:0.5rem;"><span class="avail-dot"></span>Open to work</span></footer>
+
+  <div id="caseModal" class="modal"><div class="modal-content"><button class="close-modal" id="closeModalBtn">✕</button><div id="modalBody"></div></div></div>
+
+  <script>
+    const caseStudies = {
+      templateflow: { title:"TemplateFlow", period:"Jan – Mar 2026", impact:"Production · −87% time", reasoning:"Library staff spent 2+ hours daily on manual document formatting. The library has intermittent internet, so offline-first was non-negotiable. Required full Arabic/RTL support for bilingual documents.", tradeoffs:"Electron vs Tauri: chose Electron for faster prototyping and mature PDF libraries. Tradeoff: larger memory footprint (85MB vs ~45MB) but acceptable given library hardware (4GB RAM minimum).", decisions:"Custom template parser (mustache-like) with loops and conditionals. PDF-lib for annotations (text, shapes, signatures). IndexedDB for offline storage with sync queue. Full RTL detection via Intl API and bidirectional text shaping.", metrics:"15 library staff members use it daily. Document creation time dropped from ~30 minutes to under 4 minutes (−87%). Zero cloud dependency — works 100% offline.", tags:["Electron","React","IndexedDB","PDF","RTL","Arabic"] },
+      waytoys: { title:"WayToys", period:"Dec 2025 – Present", impact:"System-level · 45MB memory", reasoning:"Linux desktop tools are either heavy GNOME extensions (>200MB) or unstable. I needed lightweight modular utilities for daily productivity.", tradeoffs:"Rust vs Go: Rust has steeper learning curve but guarantees memory safety and zero-cost abstractions. Chose Tauri over Electron for native system integration and <10MB binary size.", decisions:"Tauri v2 + Rust backend, wayland-rs for compositor communication, shared memory IPC, custom GTK-inspired theme. Uses ~8MB per floating window.", metrics:"4 tools running simultaneously under 45MB total memory. Launch time under 200ms.", tags:["Rust","Tauri","Wayland","Linux"] },
+      focusai: { title:"FocusAI Tracker", period:"Sep – Nov 2025", impact:"AI-driven insights", reasoning:"Generic productivity apps lack context about what you're actually working on. I wanted to build a tracker that understands workflow patterns.", tradeoffs:"Local inference vs cloud accuracy: prioritized user privacy with on-device TensorFlow.js classification. Cloud would be more accurate but invasive.", decisions:"Django REST backend with PostgreSQL, React dashboard with Recharts, TensorFlow.js for local classification (3-layer Dense model), Chrome extension for activity capture via tabs API.", metrics:"23% increase in focused work sessions for beta users. 98% of inference runs locally — zero data sent to servers.", tags:["Django","React","AI/ML","Python"] },
+      library: { title:"Library Management System", period:"May – Jul 2025", impact:"Role-based dashboards", reasoning:"University library managed 500+ books and 200+ active students via Excel spreadsheets. Needed digital transformation with minimal training.", tradeoffs:"Feature completeness vs simplicity: prioritized core borrow/return flows first (MVP in 3 weeks), added analytics and reporting in second iteration.", decisions:"Django REST framework with DRF-yasq, React + Tailwind for responsive UI, JWT authentication with refresh tokens, role-based permissions (student/admin/librarian), SQLite for easy deployment, Redis for session caching.", metrics:"500+ books tracked, 200+ student users, 0 downtime since deployment. Reduced checkout time from 5 minutes to under 30 seconds.", tags:["React","Django","Tailwind","REST API"] }
+    };
+
+    function openCaseStudy(projectKey) {
+      const p = caseStudies[projectKey];
+      if(!p) return;
+      const modalBody = document.getElementById('modalBody');
+      modalBody.innerHTML = `<h3>${p.title}</h3><div class="meta" style="margin:0.25rem 0 1rem;">${p.period} · ${p.impact}</div>
+        <div style="margin:1.5rem 0;"><strong style="font-family:var(--mono); font-size:11px;">📌 PROBLEM & REASONING</strong><p class="exp-desc" style="margin-top:0.5rem;">${p.reasoning}</p></div>
+        <div style="margin:1.5rem 0;"><strong style="font-family:var(--mono); font-size:11px;">⚖️ TRADE-OFFS</strong><p class="exp-desc" style="margin-top:0.5rem;">${p.tradeoffs}</p></div>
+        <div style="margin:1.5rem 0;"><strong style="font-family:var(--mono); font-size:11px;">🛠️ TECHNICAL DECISIONS</strong><p class="exp-desc" style="margin-top:0.5rem;">${p.decisions}</p></div>
+        <div style="margin:1.5rem 0;"><strong style="font-family:var(--mono); font-size:11px;">📈 REAL METRIC</strong><p class="exp-desc" style="margin-top:0.5rem;">${p.metrics}</p></div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0;">${p.tags.map(t => `<span class="tag" style="background:var(--light);">${t}</span>`).join('')}</div>
+        <div style="margin-top:1.5rem;"><a href="https://github.com/OussamaTabDev" target="_blank" class="btn-p" style="background:var(--accent);">View on GitHub →</a></div>`;
+      document.getElementById('caseModal').classList.add('active');
+    }
+
+    function closeModal() { document.getElementById('caseModal').classList.remove('active'); }
+
+    const projectsData = [
+      { num:"01", title:"TemplateFlow", period:"Jan – Mar 2026", impact:"Production · real library", desc:"Offline-first desktop document automation. Custom template engine with loops, conditionals, and full RTL support. Used daily by non-technical staff.", tags:["Electron","React","IndexedDB","PDF","RTL"], key:"templateflow" },
+      { num:"02", title:"WayToys", period:"Dec 2025 – Present", impact:"System-level · 45MB memory", desc:"Desktop productivity toolkit for Wayland/Linux. Rust + Tauri, native system integration, minimal memory footprint.", tags:["Rust","Tauri","Wayland","Linux"], key:"waytoys" },
+      { num:"03", title:"FocusAI Tracker", period:"Sep – Nov 2025", impact:"AI-driven insights", desc:"Full-stack productivity tool + browser extension. Django backend, React frontend, ML classification for workflow patterns.", tags:["Django","React","AI/ML","Python"], key:"focusai" },
+      { num:"04", title:"Library Management System", period:"May – Jul 2025", impact:"Role-based dashboards", desc:"Book borrowing platform with student/admin flows. Django REST + React + Tailwind + role-based auth.", tags:["React","Django","REST API","Auth"], key:"library" }
+    ];
+
+    const container = document.getElementById('projectsContainer');
+    if(container) {
+      projectsData.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'proj-item reveal';
+        el.innerHTML = `<span class="proj-num">${p.num}</span><div><div class="proj-head"><div class="proj-title">${p.title}</div><span class="proj-period">${p.period}</span></div><div class="proj-impact">${p.impact}</div><p class="proj-desc">${p.desc}</p><div class="proj-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div></div><span class="proj-arrow">↗</span>`;
+        el.addEventListener('click', () => openCaseStudy(p.key));
+        container.appendChild(el);
+      });
+    }
+
+    document.querySelectorAll('.case-trigger').forEach(btn => {
+      btn.addEventListener('click', (e) => { e.preventDefault(); openCaseStudy('templateflow'); });
+    });
+    document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+    document.getElementById('caseModal')?.addEventListener('click', (e) => { if(e.target === document.getElementById('caseModal')) closeModal(); });
+
+    const cur = document.getElementById('cur'), curR = document.getElementById('curR');
+    if(cur && curR) {
+      let mx=0,my=0,rx=0,ry=0;
+      document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
+      function anim(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; curR.style.left=rx+'px'; curR.style.top=ry+'px'; requestAnimationFrame(anim); }
+      anim();
+      document.querySelectorAll('a,button,.proj-item,.c-link,.btn-p').forEach(el => {
+        el.addEventListener('mouseenter',()=>{ cur.style.width='14px'; cur.style.height='14px'; curR.style.width='44px'; curR.style.height='44px'; });
+        el.addEventListener('mouseleave',()=>{ cur.style.width='8px'; cur.style.height='8px'; curR.style.width='32px'; curR.style.height='32px'; });
+      });
+    }
+
+    const obs = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold:0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    document.querySelectorAll('.c-link .c-arr').forEach(el => { if(el) el.style.marginLeft = 'auto'; });
+  </script>
+  <style>
+    .c-arr { margin-left: auto; color: var(--light); transition: color 0.2s; }
+    .c-link:hover .c-arr { color: var(--accent); }
+    .h-location { font-family: var(--mono); font-size: 10px; color: var(--mid-dark); letter-spacing: 0.08em; display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+    .f-avail { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--green); display: flex; align-items: center; gap: 0.5rem; }
+    .meta { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--mid); }
+    .exp-desc { font-size: 0.9rem; line-height: 1.65; color: var(--mid-dark); }
+    strong { color: var(--ink); }
+  </style>
+</body>
+</html>
